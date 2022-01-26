@@ -62,7 +62,7 @@
         -   Driver.java, MainDriver.java, Runner.java
     -   Whenever we run our java code, the JVM searches for the main method with the correct type **signature**
 -   **Signature**
-    -   public static void main(Sring[] args)
+    -   public static void main(String[] args)
         -   Alternative, but valid and rarely used signature:
             -   public static void main(String... args)
 -   If the JVM cannot find the main method in the java source file then it will either:
@@ -434,25 +434,334 @@ if(day.equals("Monday") || day.equals("Tuesday") || )
         -   if the reference changes so does the copy
         -   comparing two objects of different references would always return false with ==
 
-    ## Memory
+![Stack & Heap Example](https://www.baeldung.com/wp-content/uploads/2018/07/java-heap-stack-diagram.png)
 
-    -   **Stack Memory**
-        -   Static memory alolocation and execution of a particular thread
-        -   Temporary memory where variables values are stored when methods are invoke
-        -   New method invocation creates new blocks and can reset those variable
-        -   **ONLY accessible by the current running method and will not exist once it ends**
-        -   Fase access to those values needed and easy to find
-        -   Threadsafe
-        -   IF full, java.lang.StackOverFlowError
-    -   **Heap Memory**
-        -   used for dynamic memory allocation of java objects and JRE classes
-        -   Object creation always created in HEAP and has global access
-        -   reference to variable names store stack memory
-    -   **Garbage Collection**
-        -   Automatically handles
-        -   Removes unused objects from the heap memory
-            -   4 ways to make an object eligible for GC
-                -   1. Nullifying the reference var
-                -   2. Reassign the reference
-                -   3. Object created inside the method
-                -   4. Island of Isoaltion
+## Memory
+
+-   **Stack Memory**
+    -   Static memory alolocation and execution of a particular thread
+    -   Temporary memory where variables values are stored when methods are invoke
+    -   New method invocation creates new blocks and can reset those variable
+    -   **ONLY accessible by the current running method and will not exist once it ends**
+    -   Fase access to those values needed and easy to find
+    -   Threadsafe
+    -   IF full, java.lang.StackOverFlowError
+-   **Heap Memory**
+    -   used for dynamic memory allocation of java objects and JRE classes
+    -   Object creation always created in HEAP and has global access
+    -   reference to variable names store stack memory
+-   **Garbage Collection**
+    -   Automatically handles
+    -   Removes unused objects from the heap memory
+        -   4 ways to make an object eligible for GC
+            -   1. Nullifying the reference var
+            -   2. Reassign the reference
+            -   3. Object created inside the method
+            -   4. Island of Isoaltion
+
+![Stack & Heap Example](https://www.baeldung.com/wp-content/uploads/2018/07/java-heap-stack-diagram.png)
+
+# String Intro
+
+-   **Spring Literal**
+    -   String is specicial in that you don't need to use a constructor to create it
+    -   Can print length of a string
+    -   Can print each character within a string
+        -   str.charAt(#)
+
+```java
+String someString = "This is a lot of text in a string"
+//would return the location of the first char "l" in the word lot
+someString.indexOf("lot")
+someString.endsWith()
+someString.startsWith()
+
+/
+"".equals("value")
+"value".equals("value")
+"value".equalsIgnoreCase("VaLuE")
+```
+
+# String Pool
+
+-   Due to the immutable nature of Strings in Java, we can optimize the amount of memory allocated for them
+    -   **STORE ONLY ONE COPY** of each literal String in the pool
+        -   This is call _interning_
+    -   When we create a String variable and assign a value to it and the JVM searches the pool for a String of equal value
+        -   **If found**
+            -   Java compiler will simply return a refernce to its' memory address, without allocating additional memory
+        -   **NOT found**
+            -   it'll be added to the pool (interned) and its' reference will be returned
+
+## Manipulating String Values
+
+-   Strings are **immutable**
+
+```java
+String str = "Charles is awesome";
+System.out.println(str.concat(", SIKE!"));
+//output: Charles is awesome, SIKE!
+String newStr = str.concat(", SIKE!");
+str = str.concat(", SIKE!");
+
+System.out.println(str); // Output: Charles is awesome
+// Must reassign the string in order to call this
+
+str.toUpperCase()
+str.toLowerCase()
+```
+
+-   String. or str. and tab will let you see what methods are possible, you can use this so search documentation to explore specific methods
+-   _Creating objects is "expensive" in java_
+-   **StringBuffer**
+    -   class to create new string objects
+    -   THIS allows you to mutate you string
+    -   this helps prevent multiple uses of object
+    -   **Synchronized** class
+    -   Ready for multithreading
+    -   **Single-threaded scenarios StringBuffer might be slow**
+-   **StringBuilder**
+    -   very similar to StringBuffer
+    -   if not worries about multi-threading then use the StringBuilder
+
+# == vs .equals()
+
+-   Both == operator and .equals() methods are used to compare two objecsts in Java
+-   == **operator** compares reference or memory location of objects in a heap,
+    -   whether they point to the same location or not
+-   .equals() **method** compares content between one another
+    -   whether the values in objects match
+    -   defaults to equals(Object o)
+    -   **CAN** be overriden, read more [here](https://www.geeksforgeeks.org/override-equalsobject-hashcode-method/)
+
+```java
+String s1 = "Hello";
+String s2 = "Hello";
+String s3 = new String("Hello");
+
+System.out.println(s1 == s2); // true
+System.out.println(s1 == s3); // false
+System.out.println(s1.equals(s2)); // true
+System.out.println(s1.equals(s3)); // false
+```
+
+# Wrapper Classes
+
+-   What is a Wrapper Class?
+    -   A wrapper class wraps (encloses) around a data type and gives it an object appearance
+    -   Wrapper Classes are ALL **FINAL** and **IMMUTABLE**
+-   Types:
+    -   Wrapper: Boolean, Byte, Character, Double, Float, Integer, Long, Short
+    -   Primitive: boolean, byte, char, double, float, int, long, short
+-   Why Wrapper Class?
+    -   Creation from other data
+    -   methods attached
+
+```java
+Integer hundred = Integer.valueOf("100");
+
+Integer seven = Integer.valueOf("111", 2);
+Integer.toString(seven, 2);
+```
+
+## Auto-Boxing
+
+-   Can just declare Integer seven = 7;
+
+```java
+Integer seven = 7;
+Integer seven = new Integer(7);
+```
+
+-   We as programmers are generally lazy!!!
+-   **Syntactic Sugar**
+
+# Intro Arrays
+
+## Concepts
+
+-   List of ints, Strings, booleans.
+-   Creating an array you must specifiy the type
+-   int[] intArr;
+-   Arrays are mutable, exclused **SIZE**
+
+```java
+
+// initilize an empty array with 25 values (result to default)
+int[] intArr = new int[25];
+intArr.add(123984712349);
+intArr[24] = 12938471234;
+
+int[] grades = {75, 90, 1000};
+
+```
+
+## Enhanced for loops
+
+-   Arrays have the option to use the enhanced for structure
+
+```java
+int[] grades = {50, 75, 100, 35};
+
+// Traditional for loop
+for(int i = 0; i < grades.length; i++){
+    System.out.println(marks[i]);
+}
+
+// Enhanced for loop
+for(int grade:grades){
+    System.out.println(grade);
+}
+```
+
+# Classes
+
+-   **Blueprint/Templates**
+    -   constructe the attributes related to an object
+    -   3 Important Steps
+        1. Declaration
+            1. Must declare a variable to refer to the object
+            2. can declare on it's own
+        2. Instantiation
+            1. **new** keyword
+            2. instatiates the class by allocated memory for a new object
+            3. returns the reference to that memory
+        3. Initialization
+            1. the new keyword requires on, postfice argument as **constructor**
+            2. **DOES NOT** need to be assigned to a variable
+            3. Can be directly used in a expression
+
+```java
+int height = new Rectangle(13).addHeight(2);
+```
+
+## Class design basics
+
+-   Nothing but a template to create objects
+-   Each of these objects can have their own specific state
+-   What are the values? That's up to you/library/package.
+-   3 Determinations
+    -   What is the state(variables)?
+    -   How do we allow the construction?
+    -   Behaviors/Operations/Methods you want to allow on the object?
+
+## Basic Design class
+
+-   What are the States(variables) of an object?
+-   Dog Class
+    -   String breed
+    -   String name
+    -   int barkPitch
+    -   int weight
+    -   int height
+    -   int width
+-   How do we construct this Dog?
+    -   new Dog();
+    -   new Dog(breed, name) // personal knowledge
+    -   new Dog(breed, name, weight, height, width) // clinic purpose
+-   Behaviors
+    -   borkbork();
+    -   isTailWag();
+    -   isWalking();
+    -   isRunning();
+    -   catChasing();
+    -   mailmanBiting();
+    -   isEating();
+    -   isHungry();
+
+```java
+public class Dog{
+
+    // State
+    private String breed; // Can no longer use the Dog.breed;
+    String doggoName;
+    int barkPitch;
+    int weight;
+    int height;
+    int width;
+    int[] offspringWeight;
+
+    // Constructor
+
+    // default constructor that you DON'T need to specify
+    // UNLESS you make you
+    public Dog(){
+        super(); // default class Object!
+    }
+
+    // writing your own constructor OVERWRITES
+    public Dog(String breed, String doggoName, int... offspringWeight){
+        this.breed = breed;
+        this.doggoName = doggoName;
+        // dog(Burnese, Atlas, 12,12,10,8,9 )
+        this.offspringWeight = offspringWeight;
+    }
+
+    public void borkbork(){
+        String hello = "Hello";
+        System.out.println("Am dog, bork bork!" + hello);
+        int counter = 0;
+        if(hello.equals("Hello")){
+            counter++;
+            String actorName = "Bruce Willis";
+        }
+        // System.out.println(actorName); would fail because
+        System.out.println(counter); //
+    }
+}
+```
+
+# Scopes
+
+-   **Class**
+    -   scoped to the classes itself not to any particular instance
+    -   if a class is need to start an application it is loaded in (class loading)
+-   **Instance**
+    -   Declarations are scoped to a particular instance
+    -   Declarations are not shared across instances
+-   **Method**
+    -   Declarations are scoped to the method body
+    -   Parameters within the method signature scoped here as well
+-   **Block**
+    -   Declarations are scoped to the block they are declared in
+
+# Modifiers
+
+-   **public** - Big Kahoona
+    -   is Access modifier
+    -   it is used to set access level for
+        -   classes
+        -   attributes
+        -   methods
+        -   constructors
+-   Two modifier
+    -   **Access Modifiers**
+        -   Class-based:
+            -   _public_
+                -   accessible by any other class
+            -   _default_
+                -   only accessible to classes in the same package
+        -   Attributes, method and constructor:
+            -   **public**
+            -   **default**
+            -   **private**
+                -   only accessible in the declared class
+            -   **protected**
+                -   code is accessible only to classes in the same package and subclasses.
+    -   **Non-Access Modifiers**
+        -   Class-based:
+            -   **final**
+                -   class cannot be inherited by other classes
+            -   **abstract**
+                -   these class cannot be instantiated in memory
+        -   Attributes and Methods:
+            -   **final**
+            -   **abstract**
+            -   **static**
+                -   Attributes and methods belong to the class rather the object
+            -   **synchronized**
+                -   Methods can only be accessed by one thread at any given time
+            -   **transient**
+                -   Attributes and methods are skipped when serializing the object
+            -   **volatile**
+                -   Value of any attribute is not cached thread-locally, it is always read from the main memory
