@@ -673,9 +673,9 @@ int height = new Rectangle(13).addHeight(2);
 public class Dog{
 
     // State
-    private String breed; // Can no longer use the Dog.breed;
-    String doggoName;
-    int barkPitch;
+    private String breed; // Can no longer use the dog1.breed;
+    public String doggoName;
+    protected int barkPitch;
     int weight;
     int height;
     int width;
@@ -709,6 +709,15 @@ public class Dog{
         System.out.println(counter); //
     }
 }
+
+Dog atlas = new Dog("Burnese Mountain Dog", "Atlas");
+
+System.out.println(atlas.breed); // return: wouldn't be able to write because it's private
+System.out.println(atlas.doggoName); // return Atlas
+
+atlas.doggoName = "Banana";
+
+
 ```
 
 # Scopes
@@ -765,3 +774,267 @@ public class Dog{
                 -   Attributes and methods are skipped when serializing the object
             -   **volatile**
                 -   Value of any attribute is not cached thread-locally, it is always read from the main memory
+
+# Intro to the OOPs
+
+## Programming Paradigms
+
+-   simply a school of though or model that has distinct features, frameworks, styles and patterns to help provide solutions to particular problems.
+-   **Not all tools are good for all jobs**
+    -   some tasks are much easier to solve with functional programming
+    -   where otheres are esiter with object-orient programming
+-   Note that there are 4 major programming paradigms
+    -   [Whirlwind Tour of Programming Paradigms](https://hackr.io/blog/programming-paradigms)
+
+### Proecedural
+
+### logical
+
+### Functional
+
+### Object Oriented Programming
+
+-   a programming paradigm
+-   relies on the concept of classes and objects to structure a software program
+-   Simple, reusable pieces of code
+-   Classes = blueprint
+-   Think of all the objects, person and different things involved in our programming
+    -   **State**
+        -   What data to you with to use for this specific class
+    -   **Behavior**
+        -   What are some of the potential actions/methods/verbs/behaviors
+    -   **Construction**
+        -   What does it NEEED
+
+# 4 Pillars of OOPs
+
+-   Inheritence
+-   Polyphorism
+-   Encapsulation
+-   Abstraction
+
+## Inheritance Basics
+
+-   This allows you to **_extend_** information from one class to another
+-   You can get the state and methods from one class and use it within another
+-   Object is at the top of the Inheritance hierarchy
+-   Whenever you call the subclass constructor the super class constructor is always called
+    -   DEFAULTED SUPER();
+-   Can hold the subcalass reference variables in a super class
+
+```java
+
+class Animal {
+    ...
+}
+
+class Dog extends Animal {
+
+}
+
+// This is allowed and will result in the passing of the subclass reference variables and methods
+Animal figs = new Dog();
+
+// This will error as our Animal is the super class of dog
+Dog digs = new Animal();
+```
+
+## Polyphorism
+
+-   Simply means "many forms"
+-   WE have many class that are related to each other by inheritance
+-   This allows us to perform single actions in different ways
+-   Superclass Animal
+-   Method called animalSound()
+    -   Pig sub-class w/ Method animalSound that pritns out "OINK"
+    -   Cat sub-class w/ Method animaleSound that prints out "MEOW"
+-   Same code, different behavior
+-   based on the content of the reference variables
+
+## Overloading
+
+-   we can overload constructors or methods
+-   Change the parameteres of a constructor or methods
+-   uses the name
+-   Different ways this is done
+    -   change the number of parameters
+    -   change the datatype of paramaters
+
+```java
+public class Calculator{
+    public static int add(int x, int y){
+        return x + y;
+    }
+
+    public long add(long x, long y){
+        return x + y;
+    }
+
+    public void add(double x, double y){
+        System.out.println(x + y);
+    }
+
+    public float add(float x, float y){
+        return x + y;
+    }
+
+    public byte add(byte x, byte y){
+        return x + y;
+    }
+
+    public short add(short x, short y){
+        return x + y;
+    }
+
+    public Calculator getCalculator(){
+        return new Calculator();
+    }
+}
+```
+
+## Overriding
+
+-   dynimacially bind the method from the subclass in response to a method call from a subclass object reference by the super class type
+-   This can only be done on methods!!!!!!!
+-   changes the overall function of a method for that subclass
+-   Allows programming for interface then implementation
+
+```java
+
+public class Animal {
+    public void animalSound(){
+        System.out.println("Am animal that makes sounds, woo");
+    }
+}
+
+class Dog extends Animal {
+
+    @Override
+     public void animalSound(){
+    }
+
+    @Override // error from your IDE because you Animal class doesn't have this method
+    public void isTailWagging(){
+
+    }
+
+
+}
+
+```
+
+# Annotations
+
+-   A form of metadata, provide data about a program that is not part of the program
+-   **NO DIRECT EFFECT** on the operation of program
+-   Use cases:
+    -   Information for the compiler
+    -   Compile-time and deployment time processing
+    -   Runtime processing
+
+## Common Annotations
+
+### @Override
+
+-   informs the compiler that the element is meant to tbe overridden from a delcared method in the super class
+-   **ITS NOT REQUIRED**
+    -   prevent any errors
+    -   if the method fails to correctly override the compiler generates an error
+
+### @Deprecated
+
+-   indicates that the marked element is deprecated and hsould no longer be used
+-   Compiler generates a warning whenever a program uses a method, class or field with that annotation
+
+![JavaDocs](https://www.oracle.com/technical-resources/articles/java/javadoc-tool.html)
+
+## Encapsulation
+
+-   Direct acces to the state of a class or being able to change that state shouldn't be allowed
+-   Better to allow behaviors of that class handle the changes to state
+-   Senistive data is hidden from the user
+    -   Declare variables as private
+    -   provide public get & set methods (doesn't always need to be pubblic)
+-   **Getters & Setters**
+
+```java
+
+public class Animal{
+
+    private String animalName;
+    private int animalAge;
+    private final isBreathing = true;
+
+    public String getAnimalName(){
+        return animalName;
+    }
+
+    public void setAnimalName(String animalName){
+        this.animalName = animalName;
+    }
+
+    public int getAnimalAge(){
+        return animalAge;
+    }
+
+    public void setAnimalAge(int animalAge){
+        this.animalAge = animalAge;
+    }
+
+}
+```
+
+## Abstraction
+
+-   the key role is having the innerworking not really be known
+-   hiding all the complexities
+-   they can call a method and expect it to work via the methods invoked (NOMENCLATURE (namig of methods and variables) is DRASTICALLY important)
+
+### Abstract classes
+
+-   Provided a feature by which you don't need to specify the implementation of it
+-   Cannot instantiate an abstract
+-   You need to use the keywords **_extends_** to have a subclass inherit this abstract class
+-   Requires you provide that non-access modifier key word **abstract** before both the class and methods
+-   If a class extends an abstract class it REQUIRES that you provided the implementation for any abstract method
+-   What are the use cases:
+    -   Think about cooking a dish
+        -   Steps:
+            1. Prep
+            2. Recipe
+            3. Cleanup
+
+### Interfaces
+
+-   Interfaces establish the communication agreement( or contract) between two classes which are talking with on another
+-   One interface can extend another interface
+-   If a class wants to implemente the interface intot the subclass **implements** keyword
+
+```java
+public interface CrudDAO{
+    ... // some methods here to be implemented later
+    int speed = 0; // considre a constant variable in your interface
+    public void makeSound();
+}
+
+
+/// some other file
+
+public class Animal implements CrudDAO{
+    ... // Animal components
+    public String getAnimalName(){
+        return this.animalName;
+    }
+    @Override
+    public void makeSound(){
+    }
+}
+```
+
+## Interfaces vs Abstract class
+
+-   Interfaces
+    -   useful for when you want two classes, componenets talk with one another to have similar methods
+    -   you want to defined communication between two
+    -   CANNOT have private, everything public
+    -   CANNOT include variables, none of those variables with change. Consider **_CONSTANT VARIABLEs_**
