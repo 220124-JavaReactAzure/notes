@@ -429,12 +429,13 @@ if(day.equals("Monday") || day.equals("Tuesday") || )
         -   String (immutable)
         -   Wrapper Classes(immutable)
         -   LocalDate, LocalDateTime(immutable)
-    -   Reference variable
+    -   **Reference variable**
+        -   stored in stack memoery
         -   copies the reference
         -   if the reference changes so does the copy
         -   comparing two objects of different references would always return false with ==
 
-![Stack & Heap Example](https://www.baeldung.com/wp-content/uploads/2018/07/java-heap-stack-diagram.png)
+![Comparison](images/primitive-vs-object.png)
 
 ## Memory
 
@@ -1038,3 +1039,477 @@ public class Animal implements CrudDAO{
     -   you want to defined communication between two
     -   CANNOT have private, everything public
     -   CANNOT include variables, none of those variables with change. Consider **_CONSTANT VARIABLEs_**
+-   Abstract Classes
+    -   high level structure provided to the subclass to ensure those variables/states and methods are always generated and implemented
+    -   Leaves the implementationto when you are defining classes extending your abstract class
+    -   CAN have private methods
+
+<hr>
+<hr>
+<hr>
+<hr>
+<hr>
+
+# Generics
+
+-   introduced in Java 5
+-   enforce compile time safety by allowing you to use parameterized types.
+-   They are covered here because the are frequently and heavily used with collections.
+-   Generics can be declared on a
+    -   **class** (generic types)
+    -   **method parameters**(generic methods)
+    -   **return types**
+
+Before Java 5, you had to write something like this and hope other developers understood to only put Strings inside:
+
+```java
+List names = new ArrayList();
+names.add("Alice"); // good use
+name.add(new Object()); // uh oh - we want to prevent this from happening
+```
+
+With generics, you can restrict a class to only accept objects of a given type and the compiler will prevent you from using any other type:
+
+```java
+List<String> names = new ArrayList<>(); // using a List of Strings only
+names.add("Alice"); // nice!
+names.add(new Object()); // now we get a compilation error to stop this - generics save the day!
+```
+
+# Generic Classes
+
+To make a class (or interface) generic, use the angle brackets when declaring it, and use an arbitrary "generic type" which is determined by the invoking code. The generic type can then be reused throughout the class to enforce type safety.
+
+## Naming Convention for Generics
+
+Technically, type parameters can be named anything you want. The convention is to use single, uppercase letters to make it obvious that they are not real class names.
+
+-   E => Element
+-   K => Map Key
+-   V => Map Value
+-   N => Number
+-   T => Generic data type
+-   S, U, V, and so on => For multiple generic data types
+
+# Exceptions/Errors
+
+## Error
+
+-   Error class is used to indicate more serious problems in the architecture and shouldn't be handled in the application code
+-   This refers to problems that the application cannot recover from.
+    -   How to fix?
+        -   Modifiying application architecture
+        -   refactoring code
+    -   Examples:
+        -   InternalError
+        -   OutOfMemoryError
+        -   AssertionError
+
+## Exception
+
+-   events that occurs during the execution of a prgram that disrupts the normal flow of instructions
+-   unexpected or unwanted event which can happen either at compile-time or run-time in application code
+-   can happen frequently in the course of development
+-   Exceptions can be several types and all exception types are organized in a fundamental hierarchy
+
+## Class Hieracrhy
+
+![Hierarchy](https://rollbar.com/wp-content/uploads/2021/07/java-exceptions-hierarchy-example.png)
+
+## Unchecked vs Checked
+
+### Runtime Exception (Unchecked)
+
+-   It reflects some error inside the program logic
+    -   Example: Dividing by Zero throws a ArthimetixException
+-   Java does not verify unchecked exceptions at compile-time.
+-   We don't have to declare unchecked exception in a method with the throws keyword.
+-   Some common unchecked exceptions include:
+    -   **NullPointerException**
+        -   occurs when a variable is accessed which is not pointing to any object and refers to nothing or null.
+        -   Since the NullPointerException is a runtime exception, it doesn't need to be caught and handled explicitly in application code.J
+    -   **ArrayIndexOutOfBoundsException**
+    -   **IllegalArgumentException**
+-   _RuntimeException_ is the superclass of all unchecked exceptions
+    -   we can use this class to create a custom unchecked exception by extending RuntimeException
+    -
+
+### Compile-time Exception (Checked)
+
+-   Checked exceptions are handles at compile time
+    -   IF a method dis throwing a **checked** exception then it should be handled using a try-catch block
+    -   OR it should declar the exception using throws keyword, otherwise it will give an compilation error.
+-   These exceptions represent errors outisde the control of the program.
+-   Java will verify these exceptions are caught at compile-time
+-   Two Methods for Handling the
+    -   **Try/Catch/Finally** blocks
+    -   _Ducking_ or _Declaring_ Exceptions
+-   _Exception_ class is used to create custom checkedd exceptions
+    -   extends Exception
+
+## Try/Catch/Finally blocks
+
+-   _Anatomy of a Try/Catch/Finally_
+    -   **Try-block**
+        -   this is where "risky" code is executed
+        -   this is where a set of statements that might throw and exception might occur
+        -   always has a following catch-block after it
+    -   **Catch-block**
+        -   used to handle the uncertain condition of the try blacok
+        -   this _ALWAYS_ follows a try-block
+        -   Completely ignored if no exception (or not specific exception) has been thrown (think of multi-exception throws)
+    -   **Finally-block**
+        -   executed after catch block
+        -   basically used
+-   Try-catch-finally or try-catch has 3 cases scenarios
+    -   Exception occurs in try block and handled in the catch blcok
+    -   Exception occurs in the try-block and NOT handled in the catch block
+    -   Exception doesn't occur in try block
+    -
+
+## Ducking/Declaring Exceptions
+
+-   These are exceptions that will be handled later by the parent method
+-   You don't want to handle it in your current method so you throw it to the parent to be handle
+-   **Ducking your responsibility** ;P
+    -   we can all vibe with this
+-   Uses the throws keyword along with the exception name your throwing
+
+```java
+public void methodName() throws Exception{
+    if(charles == "dumdum"){
+        throw new Exception();
+    }
+}
+```
+
+### Rules for multi-blocks
+
+-   Try-block **MUST ALWAYS** be followed by at least one catch!
+-   Can have multiple catches for one try block
+-   this is useful to handle multiple types of exceptions thrown to more easily interrupt
+
+```java
+class Example{
+   public static void main(String args[]){
+     try{
+         int a[]=new int[5];
+         a[4]=30/0;// Throws ArithmeticException
+         a[100]=10; // Throws ArrayIndexOutOfBoundException
+         System.out.println("First print statement in try block");
+     }
+     catch(ArithmeticException e){
+        System.out.println("Warning: ArithmeticException");
+     }
+     catch(ArrayIndexOutOfBoundsException e){
+        System.out.println("Warning: ArrayIndexOutOfBoundsException");
+     }
+     catch(Exception e){
+        System.out.println("Warning: Some Other exception");
+     }
+   System.out.println("Out of try-catch block...");
+  }
+}
+
+```
+
+### Try with resources
+
+-   allows us to declare reosurces to be used in a try blcok with the assurance that the resources will be clsoed after execution of that block
+-   **Resources decalred NEED to implement the AutoCloseable interface**
+-   resources must both be declared and intialized inside a try
+-   They **CAN** still have a catch and finally block to handle everything as a normal trycatch block would
+
+## Why Make Custom Exceptions?
+
+-   Java exceptions cover almost all general exceptions that are bound to happen in programming
+-   However, we sometimes need to supplement these with our own.
+-   Main Reasons why?
+    -   Business logic exceptions
+        -   specific to the business logic and workflow
+        -   these help the application users or devs understand the exact problem is
+    -   to catch and provide specific treatment to a subset of existing java exceptions
+-   These can be checked or unchecked.
+
+## When to use Checked vs Unchecked?
+
+-   Important and good practice to use Exceptions to separate error-handling code from regular code
+-   Oracle provides documentation on the matter [here](https://docs.oracle.com/javase/tutorial/essential/exceptions/runtime.html)
+-   "If a client can reasonably be expected to recover from an exception, make it a checked exception. If a client cannot do anything to recover from the exception, make it an unchecked exception"
+    -   Example. Think of validating that a file exists, if the user input was invalid we can throw a custom
+
+# Serialization
+
+-   java provides a functionality called object serialization
+-   **\*implements Serializable**
+    -   marker interface
+        -   no data or methods associated
+        -   USed to "mark" java classes so that objects of these class may get certain capabilities
+-   this is where an object can be represented as a sequence of bytes
+    -   This includes the objects data
+    -   information about the object's type
+    -   types of data stored in the object
+-   Serializaed objects are written to files and can be read from files and de-serialized
+    -   this process can recreate the object in memory
+    -   this process is JVM **independent**
+        -   meaning you can perform this process on a completely different machine/platform
+-   The two classes with high-level streams that contain the methods for serialization and deserialization are
+    -   **ObjectInputStream**
+        -   reads in serialized data and de-serializes it
+        -   the return value is of type Object so you will need to cast it to it's appropriate data type
+    -   **ObjectOutputStream**
+        -   serializes the object and sends it to the output stream
+
+## Points on Serialization
+
+1. If a parent class has implemented Serializable interface then child class doesn’t need to implement it but vice-versa is not true.
+2. Only non-static data members are saved via Serialization process.
+3. Static data members and transient data members are not saved via Serialization process.So, if you don’t want to save value of a non-static data member then make it transient.
+4. Constructor of object is never called when an object is deserialized.
+5. Associated objects must be implementing Serializable interface.
+
+## Why Use it?
+
+-   **_Communication_**
+    -   If you have two machines that are running the same code, and they need to communicate
+    -   an easy way is for one machine to build an object with information that it would like to transmit
+    -   then serialize that object to the other machine.
+    -   _It's not the best method for communication, but it gets the job done._
+-   **_Persistence_**
+    -   If you want to store the state of a particular operation in a database
+    -   it can be easily serialized to a byte array, and stored in the database for later retrieval.
+-   **_Deep Copy_**
+    -   If you need an exact replica of an Object
+        -   don't want to go to the trouble of writing your own specialized clone() class
+        -   simply serializing the object to a byte array
+        -   de-serializing it to another object achieves this goal.
+-   **_Caching_**
+    -   Really just an application of the above,
+    -   but sometimes an object takes 10 minutes to build, but would only take 10 seconds to de-serialize.
+    -   Rather than hold onto the giant object in memory, just cache it out to a file via serialization
+    -   Read it in later when it's needed.
+-   **_Cross JVM Sycnhronization_**
+    -   Serialization works across different JVMs that may be running on different architectures.
+
+## Comparable vs Comparator
+
+-   [**Comparable**](https://docs.oracle.com/javase/8/docs/api/java/lang/Comparable.html)
+    -   A comparable objecet is capable of comparing itself with another object
+    -   Class itself must implement the java.lang.Comparable interface to compare its instances
+    -   We can implement the Comparable interface within our class
+        -   implements Comparable\<Classname>
+        -   Override the method compareTo()
+-   [**Comparator**](https://docs.oracle.com/javase/8/docs/api/java/util/Comparator.html)
+    -   This is an exterenal element type we are comparing
+    -   **A seperate class**
+    -   We create multiple separate classes the implements the Comparator.
+        -   To make comparisons we must do 3 things:
+            -   Create a class that implements Comparator
+            -   make an instance of the Comparator class
+            -   Call the overloaded sort() method, giving it both the list and the instance of the class that implements Comparator
+-   _When to use what_
+    -   Comparable is meant for objects with natural ordering
+    -   Logically comparable interface compares "this" reference with the object specified
+    -   Classes implementing Comparable can either List or Array can be sorted automatically by using Collections.sort() or Arrays.sort()
+        -   They will then be sorted based on their natural order defined by the compareTo() method (or the one you overriden)
+    -   Comparable can use only **ONE** comparison!
+    -   You can write more custom comparators as you want for a gicen type, all using different interpretations of what the sorting is meant to do.
+
+# Iterator and Iterable
+
+# **Iterator**
+
+-   use to iterate or traverse or retrieve a collection or stream objects elements one by one
+    -   we can perform borth read and remove operations
+    -   improved version of enumeration with the additional functionality of removing an element
+    -   _ONLY_ cursor available for the entire collection framework
+    -   Iterator object can be created by calling interator() method prsent in the collection framework
+-   **Methods**:
+    -   hasNext(): returns true if the iteration has more elements
+    -   next(): returns the next element in the iteration. _*Throws*_ _NoSuchElementException_ if no more element present
+    -   removes(): removes the next element in the iteration. This method can be called only once per call to next();
+        -   Throws two Exceptions:
+        -   _UnsupportedOperationException_: if the remove operation is not supported by this iterator
+        -   _IllegalStateException_: if the next method has not yet been classed, or the remove method has already been called after the last call to the next method.
+-   **Advantages**:
+    -   We can use it for any Collection Class
+    -   It supports both READ and REMOVE operations
+    -   Universal Cursor for the Collection API
+    -   Method names are simple and easy to use.
+-   **Limitations**:
+    -   In CRUD operations, it does not support CREATE and UPDATE operations
+    -   It supports only Forward direction iteration that is Uni-Directional iterator
+-   This is one of three java Cursors, the others are:
+    -   **_Enumeration_**
+        -   used for legacy class (Vector, Hashtable)
+        -   Remove operation can't be performed using Enumeration
+        -   Only forward direction
+    -   **_ListIterator_**
+        -   only applicable for List collection implemented classes like ArrayList, LinkedList, etc
+        -   has more methods than iterator and can move forward and backward
+        -   has methods to replace elements
+
+# **Iterable**
+
+-   interfact that allows an onject implementing the interface to be iterated. Allows the object to be the target of enhanced for loop
+-   Three ways in which objects of Iterable can be iterated
+    -   Using enhanced for loop
+        -   Objects of classes implementing collection interface can be iterated using for-each loop
+        -   Collection interface extends Iterable itnerface
+    -   Using Iterable forEach loop
+        -   the forEach() method takes the lambda expression as a parameter. This lambda expression is called for each element.
+    -   using Itator<T> interface
+
+## Iterator vs Iterable
+
+-   Iterator stores the iteration state
+    -   means that it provides utility methods to get the current element, check if the next element exists and move forward
+    -   Remember current location in a collection and return sthe next element if present.
+-   Iterable on the other hand doesn't maintian any such iteration state
+-   Iterable should produce a new isntance of an Iterator every time the iterator() method is called.
+    -   Iterator maintains the iteration state, so if you return the same Iterator twice it won't work.
+-   Iterable only allows for the uni-directional flow\
+    -   Iterator has sub-interfaces like ListIterator that allows us to move back and forth.
+-   Iterable doesn't allow for use to modify elements using the for-each loop
+    -   Iterators allow removing elements from thte underlying colection during the iteration with the remove method.
+
+## Threads
+
+-   Sometimes referred to as lightweight processes.
+-   Both processes and threads provide execution environments
+    -   **BUT** creating a new thread requires fewer resources than creating a new process.
+    -   They are created in processes
+-   Every process has at _LEAST_ one thread.
+-   Threads share process's resources
+    -   can make more efficient communication
+    -   BUT potentially problematic
+-   **Multithreading** execution is an essential feature of threads.
+    -   These additional threads can be used to perform complicated tasks in the background without interrupting the main program
+-   Two basic strategies
+    -   **Directly control thread creation and management**
+        -   simply instatiate Thread each time the application needs to initiate an asynchronous task
+    -   To abstract thread management from the rest of your application, pass the application's task to an executor
+
+### States
+
+-   **New**
+    -   A thread that has not yet started, but is intialized
+-   **Runnable**
+    -   A thread executing in the JVM
+    -   Also further broken down into
+        -   Ready for Execution
+        -   Running
+-   **Blocked**
+    -   A thread that is blocked waiting for a monitor lock
+-   **Waiting**
+    -   A thread waiting for another thread to perfrom an action for up to a specified waiting time
+-   **Timed Waiting**
+    -   How much time has elapsed over the course
+-   **Terminated**
+    -   Thread that has exited/completed
+
+### Lifecyle
+
+![Lifecycle](https://www.baeldung.com/wp-content/uploads/2018/02/Life_cycle_of_a_Thread_in_Java.jpg)
+
+### Creation
+
+-   Two ways:
+    -   **extends Thread**
+        -   extending the Thread Class
+    -   **implement Runnable**
+        -   interface used for passing instances of the class to a Thread object's constructor
+
+#### Class & Methods
+
+-   The thread class has overloaded constructors
+-   Main Two we will use:
+    -   Thread()
+    -   Thread(Runnable r)
+-   Important Methods
+    -   run()
+        -   Entry point for a thread
+    -   start()
+        -   start a thread by calling the run method
+    -   sleep()
+        -   suspend thread for specified time
+        -   while using sleep(), always handle the exception it throws
+        -   throws InterruptedException
+
+#### Runnable interfaces
+
+-   It also used to create thread
+-   should only be used if you are only planning to override the run() method
+-   No other thread method needs to be overriden
+-   Provides only single method that must be implemented by the class
+
+# Synchronization
+
+-   Threads communicate primarily by sharing access to fields and objects reference fields refer to
+-   Extremely efficient but makes two kinds of errors possible
+    -   _thread interference_
+        -   describes how errors are introduced when multiple threads access shared data
+    -   _memory consistency errors_
+        -   describes errors that result from inconsistent views of shared memory
+-   Be mindful of when you have concurrent threads running if they are accessing the same mutable object
+    -   this can lead to inconsistencies known as a _race condition_
+        -   this means the behavior and results of that variables/attrivute is dependent on the sequence or timing of other uncontrollable events, resulting in various outputs each time it is run.
+        -   to help prevent this when multi-threading please be mindful to use the synchronized keyword in the methods declaration
+
+# Lambda Expression
+
+-   short block of code which takes in parameters and returns a value
+    -   aka shortcut code
+    -   multiple lines require {} and an explicit return
+-   **Single line** does NOT require a return
+-   similar to methods, but they do not need a name and they can be implemented right in the body of a method
+-   can be stored as variables **IF** the variables type is an interface which has only one method
+-   can be uses as an argument
+-   java treats a lambda expression as on Object, which is infact the true first-class citizen
+
+# Functional Interfaces
+
+-   [Functional interfaces](https://docs.oracle.com/javase/8/docs/api/java/util/function/package-summary.html) are interfaces that have only one abstract method.
+-   This method is what lambdas are implementing when they are declared
+    -   the parameter types and return types of the lambda must match the functional interface method declaration.
+    -   The Java 8 JDK comes with many built-in functional interfaces, listed in the Javadocs link above.
+
+```java
+interface MyFunctionalInt {
+  int doMath(int number);
+}
+
+public class Execute {
+  public static void main(String[] args) {
+    MyFunctionalInt doubleIt = n -> n * 2;
+	MyFunctionalInt subtractIt = n -> n - 2;
+	int result1 = doubleIt.doMath(2);
+	int result2 = subtractIt.doMath(8);
+	System.out.println(result1); // 4
+	System.out.println(result2); // 6
+  }
+}
+```
+
+## POJO vs Bean
+
+-   **Plain old java object**
+    -   not bound by any special restriction other than those forced by the Java Language.
+    -   used for increasing the readability and re-usability of a program.
+    -   Most acceptance, due to being easy to write and understand
+    -   **POJO should not:**
+        -   Extend prespecified classes, Ex: public class GFG extends javax.servlet.http.HttpServlet { … } is not a POJO class.
+        -   Implement prespecified interfaces, Ex: public class Bar implements javax.ejb.EntityBean { … } is not a POJO class.
+        -   Contain prespecified annotations, Ex: @javax.persistence.Entity public class Baz { … } is not a POJO class.
+    -   Baiscally defines an entity
+        -   Employee class with name, id, and salary defined
+-   **Java Beans**
+    -   Special type of POJOs. Some restriction on a POJO to be a bean.
+        -   **All JavaBeans are POJOs** but not all POJOs are JavaBeans.
+        -   **Serializable** i.e. they should implement Serializable interface. Still, some POJOs who don’t implement a Serializable interface are called POJOs because Serializable is a marker interface and therefore not of many burdens.
+        -   Fields are **private**. This is to provide complete control on fields.
+        -   Fields should have **getters or setters** or both.
+        -   A **no-arg constructor** should be there in a bean.
+        -   Fields are accessed only by constructor or getter setters.
+
+![POJO vs BEAN](.\images\pojo-v-bean.png)
