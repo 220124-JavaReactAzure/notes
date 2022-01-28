@@ -111,7 +111,7 @@
 -   All you need for the implementation of this is a board of cards
 -   Kanban is translanted from Japanese into "visual signal"
 
-## Kanban Boards
+##Kanban Boards
 
 -   All kanban teams revolve around this board
 -   Helps visualize work and optimization flow amungst the team
@@ -121,7 +121,7 @@
     -   accessiblity from mutliple locations
 -   **Full transparency** of your owrk and **real-time communication**
 
-    ![Generic Example of Kanban Board](https://wac-cdn.atlassian.com/dam/jcr:8d815cd2-6cc0-46a5-976c-5ac6205fbaca/Elements_of_a_kanban_board.png?cdnVersion=162)
+![Generic Example of Kanban Board](https://wac-cdn.atlassian.com/dam/jcr:8d815cd2-6cc0-46a5-976c-5ac6205fbaca/Elements_of_a_kanban_board.png?cdnVersion=162)
 
 # Additional Resources
 
@@ -134,5 +134,3 @@
 -   [Trello - Great Free Board for Larger Teams](https://trello.com/en-US)
 
 -   [Jira - Fantastic Option for Smaller Teams fro Atlassian](https://www.atlassian.com/software/jira/free)
-
-# Pair Programming
