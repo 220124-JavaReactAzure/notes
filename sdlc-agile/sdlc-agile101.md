@@ -111,7 +111,7 @@
 -   All you need for the implementation of this is a board of cards
 -   Kanban is translanted from Japanese into "visual signal"
 
-##Kanban Boards
+## Kanban Boards
 
 -   All kanban teams revolve around this board
 -   Helps visualize work and optimization flow amungst the team

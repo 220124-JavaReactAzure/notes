@@ -2,7 +2,7 @@
 
 ## Commands
 
--   Before we begin
+-   Before we begin with commands
 
     -   we should cover the basic aliases for locations in your file system.
     -   A **file system**
