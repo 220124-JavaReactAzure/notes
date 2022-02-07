@@ -37,3 +37,7 @@
     -   Multiple zones (at least 3)
     -   _Fault tolerant_
         -   failure of the data center won't affect you system
+
+# Additional Resources
+- [Cloud Provider Comparisons](https://www.zdnet.com/article/the-top-cloud-providers-of-2021-aws-microsoft-azure-google-cloud-hybrid-saas/)
+- [Azure SQL vs MySQL vs PostgreSQL](https://db-engines.com/en/system/Microsoft+Azure+SQL+Database%3BMySQL%3BPostgreSQL)
