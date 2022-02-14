@@ -218,7 +218,7 @@
     -   over a _hibernate.properties_ file.
 -   A _hibernate.properties_ file equivalent to the above _hibernate.cfg.xml_ file is given below:
     ```properties
-    hibernate.dialect=org.hibernate.dialect.MySQLDialect
+    hibernate.dialect=org.hibernate.dialect.SQLServerDialect
     hibernate.connection.driver_class=com.mysql.jdbc.Driver
     hibernate.connection.url=jdbc:mysql://localhost:3306/test_db?useSSL=false
     hibernate.connection.username=root
