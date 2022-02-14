@@ -49,21 +49,21 @@
 
 ### Algorithm Writing
 
-Step 1 − START
-Step 2 − declare three integers a, b & c
-Step 3 − define values of a & b
-Step 4 − add values of a & b
-Step 5 − store output of step 4 to c
-Step 6 − print c
-Step 7 − STOP
+- Step 1 − START
+- Step 2 − declare three integers a, b & c
+- Step 3 − define values of a & b
+- Step 4 − add values of a & b
+- Step 5 − store output of step 4 to c
+- Step 6 − print c
+- Step 7 − STOP
 
 -   **_Alternative_**
 
-Step 1 − START ADD
-Step 2 − get values of a & b
-Step 3 − c ← a + b
-Step 4 − display c
-Step 5 − STOP
+- Step 1 − START ADD
+- Step 2 − get values of a & b
+- Step 3 − c ← a + b
+- Step 4 − display c
+- Step 5 − STOP
 
 ## Algorithm Analysis
 
