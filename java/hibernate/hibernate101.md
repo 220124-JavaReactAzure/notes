@@ -142,7 +142,7 @@
     <hibernate-configuration>
     	<session-factory>
     		<!-- SQL Dialect -->
-    		<property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+    		<property name="hibernate.dialect">org.hibernate.dialect.SQLServerDialect</property>
 
     		<!-- Database Connection Settings -->
     		<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
