@@ -291,7 +291,7 @@
                 @Column(name = "last_name")
                 private String lastName;
 
-                @Column
+                @Column(unique=true, nullable=false)
                 private String email;
 
                 public student(){
