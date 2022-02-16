@@ -42,6 +42,7 @@ The 2 main annotations for Spring Core are:
 3. Request - Application Context only
 4. Session - AC only
 5. Global Session - AC only
+
 ![Bean Scopes](scopes.jpg)
 
 ### Bean Lifecycle
