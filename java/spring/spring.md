@@ -26,7 +26,7 @@ You can configure beans in an XML file. The benefit of this is that the configur
 <bean id = "helloWorld" class = "com.revature.HelloWorld">
     <property name="message" value = "Dinosaurs!"/>
 </bean>
-    ```
+```
 
 ### Configuration via Annotations
 You can also directly configure the java classes using annotations. This is more intuitive for most people and allows the configuration to exist in the relevant classes, rather than an XML file. 
