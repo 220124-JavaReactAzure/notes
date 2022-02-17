@@ -507,6 +507,201 @@
 -   [Architecture](https://docs.jboss.org/hibernate/orm/5.4/userguide/html_single/Hibernate_User_Guide.html#architecture)
 -   [Hibernate Core Interfaces](https://www.decodejava.com/hibernate-architecture.htm)
 
+## Caching in Hibernate
+
+-   Hibernate performs caching to **optimize the performance** of an application.
+-   It's used to reduce the number of database hits by storing data locally in a cache.
+
+![caching](./images/cache.jpg)
+
+### First-Level Cache / L1 cache
+
+-   is the first place that Hibernate checks for cached data
+-   L1 caching in hibernate is enabled by default
+-   **We can't disable it.**
+-   It is a mandatory cache through which all requests must pass.
+-   This type of cache is associated with the **Session object**
+    -   Each Session object caches data independently
+    -   There is _no sharing of cached data across sessions_
+    -   Cached data is deleted when the session closes.
+    -   An L1 cache is internal to a Session object
+    -   not accessible to any other session object in an application.
+-   This type of cache is only useful for repeated queries in the same session.
+-   When we query an entity first time
+    -   it retrieves the data from the database and
+    -   stores it in the L1 cache associated with the session.
+    -   If we query again with the same session object, then it loads the data from the L1 cache.
+
+### Second-Level Cache/ L2 Cache
+
+-   L2 cache is responsible for caching objects and sharing data across sessions.
+-   The L2 cache is associated with the **SessionFactory object**
+-   shared among **all sessions** created using the same session factory.
+-   If the requested query results are not in the first-level cache, then the second-level cache is checked.
+-   Any technology that supports out-of-the-box integration with Hibernate can be plugged in to act as a second-level cache.
+-   _disabled by default_
+
+    -   but we can enable it through configuration.
+    -   If L2 caching is enabled for an entity, the following workflow is used:
+        -   If an instance:
+            -   is already present in the L1 cache, then it is returned from there.
+            -   Or is not found in the L1 cache, the L2 cache is searched, and if found the data is fetched and returned from there.
+        -   If the data is not cached in the L2 cache, then the necessary data is loaded from the database and an instance is assembled and returned.
+    -   We can enable the L2 cache by adding the following properties to the **hibernate configuration file**.
+
+        ```xml
+        <!-- Enable the second-level cache -->
+        <property name="cache.use_second_level_cache">true</property>
+        <property name="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</property>
+        ```
+
+-   To make an **entity** eligible for L2 caching,
+
+    -   we annotate it `@Cache` annotation and
+    -   specify a **cache concurrency strategy**.
+    -   It's a best practice to annotate the entity class with `@Cacheable` annotation,
+
+        -   **Although not required by Hibernate**. So the entity class looks like:
+
+            ```java
+            @Cacheable
+            @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+            @Entity
+            @Table(name="student")
+            public class Student
+            {
+              //code goes here...
+            }
+            ```
+
+-   A concurrency strategy it instructs hibernate on how to store objects in the cache and retrieve them, in an environment where multiple sessions might be trying to manipulate the same object simultaneously.
+-   If we enable an L2 cache, then we decide the cache concurrency strategy for each persistent class and collection.
+-   The cache concurrency strategies are:
+
+    -   **READ_ONLY**
+        -   Use this strategy only for entities where we never change any data and use data as a reference.
+    -   **NONSTRICT_READ_WRITE**
+        -   Doesn't guarantee the consistency between the cache and the database.
+        -   Use this strategy only for entities where we change data rarely.
+    -   **READ_WRITE**
+        -   Use this strategy only for entities where we read and update data.
+    -   **TRANSACTIONAL**
+        -   Use this strategy to cache the full transactions made on the entity.
+
+## References
+
+-   [Caching](https://docs.jboss.org/hibernate/orm/5.4/userguide/html_single/Hibernate_User_Guide.html#caching)
+-   [Further Tutorials on Caching](https://www.tutorialspoint.com/hibernate/hibernate_caching.htm)
+
+## Service Locator Design Pattern
+
+-   The [Service Locator](https://en.wikipedia.org/wiki/Service_locator_pattern) design pattern is used to encapsulate the processes involved in obtaining a service in a layer of abstraction.
+-   It has a central registry known as the **Service Locator** which is responsible for returning instances of service objects based on requests from clients.
+
+![](./images/service-locator.PNG)
+
+### Design Components:
+
+-   **Client**
+    -   responsible for invoking services via the ServiceLocator.
+-   **Service Locator**
+    -   is a single point of contact for returning services to the client from the cache. It abstracts the lookup and/or creation of services.
+-   **Initial Context**
+    -   this creates, registers, and caches services. It is the starting point of the lookup and creation process.
+-   **Service Factory**
+    -   it provides lifecycle management for the service, which helps to create, register, lookup, or remove services from the cache.
+-   **Service** -
+    -   the implementation of the service, which will process the request.
+
+## References
+
+-   [Service Locator](https://www.oracle.com/technetwork/java/servicelocator-137181.html)
+
+## Object States in Hibernate
+
+-   An object of a persistent class (a class mapped to a relational database table) can be in one of three different states. These states are defined in relation to a **persistence context** (Session object).
+-   Those 3 States are:
+
+    -   **Transient State**
+        -   -When an object is created using the `new` operator and not yet associated with a Hibernate Session, then the object state is transient.
+        -   It doesn't represent a row in the database.
+        -   Transient instances are garbage collected if the application does not hold a reference anymore.
+    -   **Persistent State**
+
+        -   The object state is persistent when it is associated with the hibernate session.
+        -   The Persistent object represents a row in the database and has an identifier value.
+        -   Transient instances can be made persistent by associating them with a Session.
+        -   The `save()`, `persist()` and `saveOrUpdate()` methods are used to associate a transient object with a session and make them persistent.
+        -   Hibernate detects the changes made to persistent objects and synchronizes the state with the database.
+        -   Whenever we get the data from the database using `get()` or `load()` methods, the data will be in the persistent state.
+
+    -   **Detached State**
+        -   When a persistent object has its session closed, then it becomes detached.
+        -   Any changes made to detached objects will not be saved automatically to the database.
+        -   When a detached instance reattached with a new Session at a later point in time, it makes the object persistent again.
+        -   The Session class' `close()`, `evict(Object)`, and `clear()` methods are used to move a persistent object to the detached state.
+        -   The Session class' `update(Object)` and `merge(Object)` methods can used to reattach detached objects to a session.
+
+**Object states:**
+
+![](./images/objectstates.png)
+
+## References
+
+-   [Hibernate object states](https://docs.jboss.org/hibernate/core/3.3/reference/en/html/objectstate.html#objectstate-overview)
+-   [Modifying persistent state](https://docs.jboss.org/hibernate/orm/6.0/userguide/html_single/Hibernate_User_Guide.html#pc-managed-state)
+
+## HQL
+
+-   **H**ibernate **Q**uery **L**anguage
+    -   the object-oriented query language of the Hibernate Framework.
+    -   HQL is very similar to SQL except that we query against **persistent objects** instead of tables and columns.
+    -   Hibernate then **translates** the HQL queries to SQL queries and performs the action on the database.
+        -   We can directly write SQL statements using Native SQL, but using HQL or JPQL is recommended.
+        -   For Developer's, this separates the application layer from the persistence layer and abstracts away the actual database interaction, promoting flexibility and reusability.
+    -   IS **case-sensitive for properties** like table and column names and not for keywords like SELECT, FROM, and was, etc.
+-   **Advantages of HQL:**
+    -   It supports OOP concepts like polymorphism, inheritance, and abstraction.
+    -   It is database-independent and easy to learn.
+
+### HQL Examples
+
+-   HQL **Select** Query example to retrieve a student details whose id is 101.
+    ```java
+    TypedQuery<Student> query = session.createQuery("FROM Student WHERE id = '101' ", Student.class);
+    List<Student> students = query.getResultList();
+    ```
+-   HQL **Update** Query example to update the name to "John" whose id is 105.
+    ```java
+    Query query = session.createQuery("UPDATE Student SET name = :stud_name WHERE id = :stud_id");
+    query.setParameter("stud_name", "John");
+    query.setParameter("stud_id", "105");
+    int result = query.executeUpdate();
+    ```
+-   **Please note that HQL should only be used to batch-update records.**
+    -   If you are updating a single record,
+        -   it's _preferable to update the actual Java object's properties_
+        -   then persist that object and its changes back to the database with session.update(object) or session.flush()
+-   HQL **Delete** Query example to delete a student whose id is 108.
+    ```java
+    Query query = session.createQuery("DELETE Student WHERE id = :stud_id");
+    query.setParameter("stud_id", "108");
+    int result = query.executeUpdate();
+    ```
+-   **Similarly to updates, HQL should only be used to batch-delete records.**
+    -   If you are deleting a single record,
+        -   it's preferable to use session.delete(object).
+-   HQL **Insert** statement cannot insert values directly in to a table.
+    -   **It is only used to insert rows from another table. It supports only INSERT INTO … SELECT … .**
+    ```java
+    Query query = session.createQuery("INSERT INTO Student(id, name) SELECT s_id, s_name FROM NewStudent");
+    int result = query.executeUpdate();
+    ```
+
+## References
+
+-   [ HQL: The Hibernate Query Language](https://docs.jboss.org/hibernate/orm/5.4/userguide/html_single/Hibernate_User_Guide.html#hql)
+
 ## Criteria API
 
 -   [Criteria API](https://docs.jboss.org/hibernate/orm/5.4/userguide/html_single/Hibernate_User_Guide.html#criteria)
@@ -733,197 +928,3 @@
 
 -   [Named Queries](https://docs.jboss.org/hibernate/orm/5.4/userguide/html_single/Hibernate_User_Guide.html#jpql-api-named-query-example)
 
-## Caching in Hibernate
-
--   Hibernate performs caching to **optimize the performance** of an application.
--   It's used to reduce the number of database hits by storing data locally in a cache.
-
-![caching](./images/cache.jpg)
-
-### First-Level Cache / L1 cache
-
--   is the first place that Hibernate checks for cached data
--   L1 caching in hibernate is enabled by default
--   **We can't disable it.**
--   It is a mandatory cache through which all requests must pass.
--   This type of cache is associated with the **Session object**
-    -   Each Session object caches data independently
-    -   There is _no sharing of cached data across sessions_
-    -   Cached data is deleted when the session closes.
-    -   An L1 cache is internal to a Session object
-    -   not accessible to any other session object in an application.
--   This type of cache is only useful for repeated queries in the same session.
--   When we query an entity first time
-    -   it retrieves the data from the database and
-    -   stores it in the L1 cache associated with the session.
-    -   If we query again with the same session object, then it loads the data from the L1 cache.
-
-### Second-Level Cache/ L2 Cache
-
--   L2 cache is responsible for caching objects and sharing data across sessions.
--   The L2 cache is associated with the **SessionFactory object**
--   shared among **all sessions** created using the same session factory.
--   If the requested query results are not in the first-level cache, then the second-level cache is checked.
--   Any technology that supports out-of-the-box integration with Hibernate can be plugged in to act as a second-level cache.
--   _disabled by default_
-
-    -   but we can enable it through configuration.
-    -   If L2 caching is enabled for an entity, the following workflow is used:
-        -   If an instance:
-            -   is already present in the L1 cache, then it is returned from there.
-            -   Or is not found in the L1 cache, the L2 cache is searched, and if found the data is fetched and returned from there.
-        -   If the data is not cached in the L2 cache, then the necessary data is loaded from the database and an instance is assembled and returned.
-    -   We can enable the L2 cache by adding the following properties to the **hibernate configuration file**.
-
-        ```xml
-        <!-- Enable the second-level cache -->
-        <property name="cache.use_second_level_cache">true</property>
-        <property name="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</property>
-        ```
-
--   To make an **entity** eligible for L2 caching,
-
-    -   we annotate it `@Cache` annotation and
-    -   specify a **cache concurrency strategy**.
-    -   It's a best practice to annotate the entity class with `@Cacheable` annotation,
-
-        -   **Although not required by Hibernate**. So the entity class looks like:
-
-            ```java
-            @Cacheable
-            @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-            @Entity
-            @Table(name="student")
-            public class Student
-            {
-              //code goes here...
-            }
-            ```
-
--   A concurrency strategy it instructs hibernate on how to store objects in the cache and retrieve them, in an environment where multiple sessions might be trying to manipulate the same object simultaneously.
--   If we enable an L2 cache, then we decide the cache concurrency strategy for each persistent class and collection.
--   The cache concurrency strategies are:
-
-    -   **READ_ONLY**
-        -   Use this strategy only for entities where we never change any data and use data as a reference.
-    -   **NONSTRICT_READ_WRITE**
-        -   Doesn't guarantee the consistency between the cache and the database.
-        -   Use this strategy only for entities where we change data rarely.
-    -   **READ_WRITE**
-        -   Use this strategy only for entities where we read and update data.
-    -   **TRANSACTIONAL**
-        -   Use this strategy to cache the full transactions made on the entity.
-
-## References
-
--   [Caching](https://docs.jboss.org/hibernate/orm/5.4/userguide/html_single/Hibernate_User_Guide.html#caching)
--   [Further Tutorials on Caching](https://www.tutorialspoint.com/hibernate/hibernate_caching.htm)
-
-## Service Locator Design Pattern
-
--   The [Service Locator](https://en.wikipedia.org/wiki/Service_locator_pattern) design pattern is used to encapsulate the processes involved in obtaining a service in a layer of abstraction.
--   It has a central registry known as the **Service Locator** which is responsible for returning instances of service objects based on requests from clients.
-
-![](./images/service-locator.PNG)
-
-### Design Components:
-
--   **Client**
-    -   responsible for invoking services via the ServiceLocator.
--   **Service Locator**
-    -   is a single point of contact for returning services to the client from the cache. It abstracts the lookup and/or creation of services.
--   **Initial Context**
-    -   this creates, registers, and caches services. It is the starting point of the lookup and creation process.
--   **Service Factory**
-    -   it provides lifecycle management for the service, which helps to create, register, lookup, or remove services from the cache.
--   **Service** -
-    -   the implementation of the service, which will process the request.
-
-## References
-
--   [Service Locator](https://www.oracle.com/technetwork/java/servicelocator-137181.html)
-
-## Object States in Hibernate
-
--   An object of a persistent class (a class mapped to a relational database table) can be in one of three different states. These states are defined in relation to a **persistence context** (Session object).
--   Those 3 States are:
-
-    -   **Transient State**
-        -   -When an object is created using the `new` operator and not yet associated with a Hibernate Session, then the object state is transient.
-        -   It doesn't represent a row in the database.
-        -   Transient instances are garbage collected if the application does not hold a reference anymore.
-    -   **Persistent State**
-
-        -   The object state is persistent when it is associated with the hibernate session.
-        -   The Persistent object represents a row in the database and has an identifier value.
-        -   Transient instances can be made persistent by associating them with a Session.
-        -   The `save()`, `persist()` and `saveOrUpdate()` methods are used to associate a transient object with a session and make them persistent.
-        -   Hibernate detects the changes made to persistent objects and synchronizes the state with the database.
-        -   Whenever we get the data from the database using `get()` or `load()` methods, the data will be in the persistent state.
-
-    -   **Detached State**
-        -   When a persistent object has its session closed, then it becomes detached.
-        -   Any changes made to detached objects will not be saved automatically to the database.
-        -   When a detached instance reattached with a new Session at a later point in time, it makes the object persistent again.
-        -   The Session class' `close()`, `evict(Object)`, and `clear()` methods are used to move a persistent object to the detached state.
-        -   The Session class' `update(Object)` and `merge(Object)` methods can used to reattach detached objects to a session.
-
-**Object states:**
-
-![](./images/objectstates.png)
-
-## References
-
--   [Hibernate object states](https://docs.jboss.org/hibernate/core/3.3/reference/en/html/objectstate.html#objectstate-overview)
--   [Modifying persistent state](https://docs.jboss.org/hibernate/orm/6.0/userguide/html_single/Hibernate_User_Guide.html#pc-managed-state)
-
-## HQL
-
--   **H**ibernate **Q**uery **L**anguage
-    -   the object-oriented query language of the Hibernate Framework.
-    -   HQL is very similar to SQL except that we query against **persistent objects** instead of tables and columns.
-    -   Hibernate then **translates** the HQL queries to SQL queries and performs the action on the database.
-        -   We can directly write SQL statements using Native SQL, but using HQL or JPQL is recommended.
-        -   For Developer's, this separates the application layer from the persistence layer and abstracts away the actual database interaction, promoting flexibility and reusability.
-    -   IS **case-sensitive for properties** like table and column names and not for keywords like SELECT, FROM, and was, etc.
--   **Advantages of HQL:**
-    -   It supports OOP concepts like polymorphism, inheritance, and abstraction.
-    -   It is database-independent and easy to learn.
-
-### HQL Examples
-
--   HQL **Select** Query example to retrieve a student details whose id is 101.
-    ```java
-    TypedQuery<Student> query = session.createQuery("FROM Student WHERE id = '101' ", Student.class);
-    List<Student> students = query.getResultList();
-    ```
--   HQL **Update** Query example to update the name to "John" whose id is 105.
-    ```java
-    Query query = session.createQuery("UPDATE Student SET name = :stud_name WHERE id = :stud_id");
-    query.setParameter("stud_name", "John");
-    query.setParameter("stud_id", "105");
-    int result = query.executeUpdate();
-    ```
--   **Please note that HQL should only be used to batch-update records.**
-    -   If you are updating a single record,
-        -   it's _preferable to update the actual Java object's properties_
-        -   then persist that object and its changes back to the database with session.update(object) or session.flush()
--   HQL **Delete** Query example to delete a student whose id is 108.
-    ```java
-    Query query = session.createQuery("DELETE Student WHERE id = :stud_id");
-    query.setParameter("stud_id", "108");
-    int result = query.executeUpdate();
-    ```
--   **Similarly to updates, HQL should only be used to batch-delete records.**
-    -   If you are deleting a single record,
-        -   it's preferable to use session.delete(object).
--   HQL **Insert** statement cannot insert values directly in to a table.
-    -   **It is only used to insert rows from another table. It supports only INSERT INTO … SELECT … .**
-    ```java
-    Query query = session.createQuery("INSERT INTO Student(id, name) SELECT s_id, s_name FROM NewStudent");
-    int result = query.executeUpdate();
-    ```
-
-## References
-
--   [ HQL: The Hibernate Query Language](https://docs.jboss.org/hibernate/orm/5.4/userguide/html_single/Hibernate_User_Guide.html#hql)
