@@ -59,7 +59,7 @@
 -   Attributes are metadata used to describe the elements
     -   you can think of them as parameters defining the specific tag.
 -   Attributes are defined within a tag as a key/value pair.
-    -   Example: \<img src=”https://cdn.trendhunterstatic.com/thumbs/Tea-Cup-Kittens.jpeg” />
+    -   Example: \<img src=”cdn.trendhunterstatic.com/thumbs/Tea-Cup-Kittens.jpeg” />
 -   Global attributes are those that can be applied to any tag. Some include:
     -   class
     -   id
